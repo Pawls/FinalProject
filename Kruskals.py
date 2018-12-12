@@ -22,7 +22,7 @@ def Kruskal_Alg(self):
              
         while e < self.V -1 :   
             # Pick the smallest edge and increment  
-            min_incident_edge
+            min_incident_edge(T,G)
             u,v,w =  self.graph[i] 
             i = i + 1
             x = self.find(parent, u) 
