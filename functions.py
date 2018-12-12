@@ -10,31 +10,40 @@ from Weighted_Graph import *
 #COST of graph e with respect to graph G
 def C(e, G):
     return G.edge_dict()[e]
-#check function
-#print (C((1,4),G))
-#T = ({0},[])
-#T = ({2,3},[(2,3)])
-#T = [{2,3,5}, [(2,3),(2,5)]]
-#For TREE T with respect to graph G
-    
-"""Find all incident edges that do not form a cycle with our tree"""
-def valid_incident_edges(T, G):
+
+
+def incident_edges(T,G):
     edges = []
     for v in T[0]:
         for e in G.edge_set():
-            if v in e and e not in T[1] and e not in edges:
+            if v in e:
                 edges.append(e)
-    for e in edges:
-        if e[0] and e[1] in T[0]:
-            edges.remove(e)
-    return edges
+    return [e for e in edges if e not in T[1]]
 
-#edges = valid_incident_edges(T,G)
-#print(T)
-#print(edges)
-#G.draw_subgraph(T)
-#draw incident edges
-#G.draw_subgraph((T[0],edges))
+
+def valid_incident_edges(T, G):
+    edges = incident_edges(T,G)
+    valid_edges = []
+    for e in edges:
+        if e[0] not in T[0] or e[1] not in T[0]:
+            valid_edges.append(e)
+    return valid_edges
+#   return [e for e in incident_edges(T,G) if ....]
+    
+def min_valid_edge(T,G):
+    edges = valid_incident_edges(T,G)
+    min_e = edges[0]
+    for e in edges:
+        if C(min_e, G) > C(e, G):
+            min_e = e
+    return min_e
+
+def update(T, G):
+    e = min_valid_edge(T,G)
+    T[1].append(e)
+    for v in e:
+        T[0].add(v)
+    return T     
 
 def min_incident_edge(T, G):
     edges = valid_incident_edges(T,G)
@@ -46,16 +55,3 @@ def min_incident_edge(T, G):
             min_edge = e
             min_weight = this_weight
     return min_edge
-
-#print(min_incident_edge(T, G))
-
-"""If the next minimum incident edge is not already in our Tree, update the 
-Tree to include it"""
-def update(T,G):
-    e = min_incident_edge(T,G)
-    if e not in T[1]:
-        T[0].add(e[0])
-        T[0].add(e[1])
-        T[1].append(e)
-    return T
-
